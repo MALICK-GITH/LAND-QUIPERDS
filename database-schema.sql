@@ -457,6 +457,48 @@ CREATE OR REPLACE FUNCTION public.touch_updated_at()
 RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
 
+-- ---------- TRIGGER HANDLE NEW USER (OAuth) ----------
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_username text;
+  v_efoot text;
+BEGIN
+  v_username := COALESCE(NULLIF(NEW.raw_user_meta_data->>'username',''), split_part(NEW.email,'@',1));
+  v_efoot := COALESCE(NULLIF(NEW.raw_user_meta_data->>'efootball_username',''), v_username);
+
+  INSERT INTO public.profiles (id, username, efootball_username, first_name, last_name, country, level)
+  VALUES (
+    NEW.id, v_username, v_efoot,
+    NEW.raw_user_meta_data->>'first_name',
+    NEW.raw_user_meta_data->>'last_name',
+    COALESCE(NULLIF(NEW.raw_user_meta_data->>'country',''), 'Cote d''Ivoire'),
+    COALESCE((NEW.raw_user_meta_data->>'level')::public.user_level, 'Amateur')
+  );
+
+  INSERT INTO public.wallets (user_id) VALUES (NEW.id);
+  INSERT INTO public.user_roles (user_id, role) VALUES (NEW.id, 'player');
+
+  IF lower(NEW.email) IN ('onexdelux@gmail.com','jeaneric9610@gmail.com') THEN
+    INSERT INTO public.user_roles (user_id, role) VALUES (NEW.id, 'admin')
+    ON CONFLICT DO NOTHING;
+    UPDATE public.profiles SET level = 'Elite', badge = 'FONDATEUR' WHERE id = NEW.id;
+  END IF;
+
+  RETURN NEW;
+END; $$;
+
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM anon, authenticated, public;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created' AND tgrelid = 'auth.users'::regclass) THEN
+        CREATE TRIGGER on_auth_user_created
+          AFTER INSERT ON auth.users
+          FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+    END IF;
+END $$;
+
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'profiles_touch' AND tgrelid = 'public.profiles'::regclass) THEN
