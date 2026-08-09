@@ -39,7 +39,7 @@ USING (
       SELECT 1 FROM public.direct_messages dm
       JOIN public.conversations c ON dm.conversation_id = c.id
       WHERE dm.attachment_path = name
-      AND (c.user1_id = auth.uid() OR c.user2_id = auth.uid())
+      AND (c.user_low = auth.uid() OR c.user_high = auth.uid())
     )
   )
 );
