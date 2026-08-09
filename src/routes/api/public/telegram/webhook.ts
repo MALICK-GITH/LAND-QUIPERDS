@@ -21,11 +21,10 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Temporairement désactivé la vérification du secret token pour le débogage
-        // const provided = request.headers.get("x-telegram-bot-api-secret-token") ?? "";
-        // if (!safeEqual(provided, telegramWebhookSecret())) {
-        //   return new Response("Unauthorized", { status: 401 });
-        // }
+        const provided = request.headers.get("x-telegram-bot-api-secret-token") ?? "";
+        if (!safeEqual(provided, telegramWebhookSecret())) {
+          return new Response("Unauthorized", { status: 401 });
+        }
 
         const update = (await request.json()) as {
           message?: {
