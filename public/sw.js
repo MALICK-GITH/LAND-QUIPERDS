@@ -1,9 +1,74 @@
-/* SKILL2CASH — service worker de notifications.
+/* SKILL2CASH — service worker de notifications et cache PWA.
    Affiche les alertes système (messages, défis, duels, paiements) même
-   lorsque l'onglet n'est pas au premier plan. */
+   lorsque l'onglet n'est pas au premier plan. Gère également le cache offline. */
 
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+const CACHE_NAME = "skill2cash-v1";
+const STATIC_CACHE = "skill2cash-static-v1";
+const DYNAMIC_CACHE = "skill2cash-dynamic-v1";
+
+// Assets à mettre en cache statique
+const STATIC_ASSETS = [
+  "/",
+  "/favicon.ico",
+  "/manifest.json",
+  "/icon-192x192.png",
+  "/icon-512x512.png"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((name) => name.startsWith("skill2cash-") && name !== STATIC_CACHE && name !== DYNAMIC_CACHE)
+          .map((name) => caches.delete(name))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Stratégie de cache : Network First pour les requêtes API, Cache First pour les assets
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // Ignorer les requêtes non-GET et les requêtes vers d'autres origines
+  if (event.request.method !== "GET" || url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Stratégie Cache First pour les assets statiques
+  if (STATIC_ASSETS.includes(url.pathname) || url.pathname.match(/\.(js|css|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot)$/)) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        return cached || fetch(event.request).then((response) => {
+          const cloned = response.clone();
+          caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, cloned));
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // Stratégie Network First pour les requêtes API et pages
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const cloned = response.clone();
+        caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, cloned));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
+  );
+});
 
 // Notifications déclenchées par l'application (Realtime -> postMessage).
 self.addEventListener("message", (event) => {
