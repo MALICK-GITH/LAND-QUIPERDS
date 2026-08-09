@@ -9,6 +9,10 @@ const AIDE = [
   "/solde — voir ton portefeuille",
   "/duels — tes duels en cours",
   "/defis — tes défis en attente",
+  "/retraits — tes demandes de retrait",
+  "/depots — tes dépôts récents",
+  "/classement — voir le classement général",
+  "/stats — tes statistiques personnelles",
   "/delier — déconnecter ce Telegram",
   "/aide — afficher ce menu",
 ].join("\n");
@@ -198,6 +202,92 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
               ? ["<b>Défis en attente</b>", ...rows.map((c) => `• ${fcfaTg(c.amount)}`)].join("\n")
               : "Aucun défi en attente.",
             "/defis",
+          );
+          return Response.json({ ok: true });
+        }
+
+        if (cmd === "/retraits") {
+          const { data } = await supabaseAdmin
+            .from("withdrawals")
+            .select("id, amount, status, created_at")
+            .eq("user_id", me.id)
+            .order("created_at", { ascending: false })
+            .limit(5);
+          const rows = (data ?? []) as { id: string; amount: number; status: string; created_at: string }[];
+          await tgSend(
+            cid,
+            rows.length
+              ? [
+                  "<b>Derniers retraits</b>",
+                  ...rows.map((r) => `• ${fcfaTg(r.amount)} — ${r.status}`),
+                ].join("\n")
+              : "Aucun retrait.",
+            "/portefeuille",
+          );
+          return Response.json({ ok: true });
+        }
+
+        if (cmd === "/depots") {
+          const { data } = await supabaseAdmin
+            .from("deposits")
+            .select("id, amount, status, created_at")
+            .eq("user_id", me.id)
+            .order("created_at", { ascending: false })
+            .limit(5);
+          const rows = (data ?? []) as { id: string; amount: number; status: string; created_at: string }[];
+          await tgSend(
+            cid,
+            rows.length
+              ? [
+                  "<b>Derniers dépôts</b>",
+                  ...rows.map((d) => `• ${fcfaTg(d.amount)} — ${d.status}`),
+                ].join("\n")
+              : "Aucun dépôt.",
+            "/portefeuille",
+          );
+          return Response.json({ ok: true });
+        }
+
+        if (cmd === "/classement") {
+          const { data } = await supabaseAdmin
+            .from("profiles")
+            .select("username, level, badge")
+            .order("created_at", { ascending: false })
+            .limit(10);
+          const rows = (data ?? []) as { username: string; level: string; badge: string | null }[];
+          await tgSend(
+            cid,
+            rows.length
+              ? [
+                  "<b>Classement général</b>",
+                  ...rows.map((r, i) => `${i + 1}. ${r.username} (${r.level}${r.badge ? ` - ${r.badge}` : ''})`),
+                ].join("\n")
+              : "Aucun joueur.",
+            "/classement",
+          );
+          return Response.json({ ok: true });
+        }
+
+        if (cmd === "/stats") {
+          const { data: duels } = await supabaseAdmin
+            .from("duels")
+            .select("id, winner_id, player1_id, player2_id")
+            .or(`player1_id.eq.${me.id},player2_id.eq.${me.id}`);
+          const duelRows = (duels ?? []) as { winner_id: string | null; player1_id: string; player2_id: string }[];
+          
+          const wins = duelRows.filter(d => d.winner_id === me.id).length;
+          const total = duelRows.length;
+          const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+
+          await tgSend(
+            cid,
+            [
+              `<b>Statistiques de ${me.username}</b>`,
+              `Duels joués : ${total}`,
+              `Victoires : ${wins}`,
+              `Taux de victoire : ${winRate}%`,
+            ].join("\n"),
+            "/tableau-de-bord",
           );
           return Response.json({ ok: true });
         }
