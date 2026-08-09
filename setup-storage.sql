@@ -25,13 +25,23 @@ WITH CHECK (
   AND auth.uid()::text = (storage.foldername(name))[1]
 );
 
--- Politique pour permettre aux utilisateurs de voir leurs propres fichiers
-CREATE POLICY "Users can view their own chat evidence"
+-- Politique pour permettre aux utilisateurs de voir leurs propres fichiers et ceux des conversations
+CREATE POLICY "Users can view chat evidence in their conversations"
 ON storage.objects FOR SELECT
 TO authenticated
 USING (
   bucket_id = 'chat-evidence'
-  AND auth.uid()::text = (storage.foldername(name))[1]
+  AND (
+    -- L'utilisateur peut voir ses propres fichiers
+    auth.uid()::text = (storage.foldername(name))[1]
+    -- OU l'utilisateur peut voir les fichiers des conversations auxquelles il participe
+    OR EXISTS (
+      SELECT 1 FROM public.direct_messages dm
+      JOIN public.conversations c ON dm.conversation_id = c.id
+      WHERE dm.attachment_path = name
+      AND (c.user1_id = auth.uid() OR c.user2_id = auth.uid())
+    )
+  )
 );
 
 -- Politique pour permettre aux utilisateurs de supprimer leurs propres fichiers
