@@ -53,15 +53,19 @@ const STEPS = [
 
 function Landing() {
   const navigate = useNavigate();
-  const [signedIn, setSignedIn] = useState(false);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   // Session déjà ouverte (retour sur le site) : on renvoie directement dans l'app.
   useEffect(() => {
     let active = true;
     void supabase.auth.getSession().then(({ data }) => {
-      if (!active || !data.session) return;
-      setSignedIn(true);
-      void navigate({ to: "/tableau-de-bord", replace: true });
+      if (!active) return;
+      if (data.session) {
+        setSignedIn(true);
+        void navigate({ to: "/tableau-de-bord", replace: true });
+      } else {
+        setSignedIn(false);
+      }
     });
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session) setSignedIn(true);
@@ -71,6 +75,15 @@ function Landing() {
       data.subscription.unsubscribe();
     };
   }, [navigate]);
+
+  // Afficher un état de chargement pendant la vérification de session
+  if (signedIn === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
