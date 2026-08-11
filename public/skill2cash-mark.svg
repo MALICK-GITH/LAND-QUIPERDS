@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="SKILL2CASH">
+  <path
+    d="M256 40L408 108L378 360L256 472L134 360L104 108Z"
+    fill="#8b5cf6"
+  />
+  <path
+    d="M256 72L374 126L350 342L256 412L162 342L138 126Z"
+    fill="#0a0a0a"
+    fill-opacity="0.34"
+    stroke="#ede9fe"
+    stroke-opacity="0.35"
+    stroke-width="8"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M222 118H318L258 234H330L206 392L244 270H176L222 118Z"
+    fill="#ffffff"
+  />
+  <circle cx="346" cy="176" r="34" fill="#f59e0b"/>
+  <circle cx="346" cy="176" r="18" fill="#fef3c7"/>
+  <path
+    d="M256 40L408 108L378 360L256 472L134 360L104 108Z"
+    stroke="#f5d06f"
+    stroke-opacity="0.8"
+    stroke-width="10"
+    stroke-linejoin="round"
+  />
+</svg>

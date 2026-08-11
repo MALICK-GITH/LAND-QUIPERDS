@@ -105,6 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "icon", href: "/skill2cash-mark.svg", type: "image/svg+xml", sizes: "any" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
