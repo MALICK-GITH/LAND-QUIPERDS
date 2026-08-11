@@ -44,6 +44,20 @@ function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
+  // --- connexion ---
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // --- inscription ---
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    username: "",
+    firstName: "",
+    lastName: "",
+    country: "Cote d'Ivoire",
+    level: "Amateur",
+  });
 
   useEffect(() => {
     let active = true;
@@ -72,10 +86,6 @@ function AuthPage() {
     return <div className="grid-lines min-h-screen bg-background" />;
   }
 
-  // --- connexion ---
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-
   async function handleLogin(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     setLoading(true);
@@ -91,17 +101,6 @@ function AuthPage() {
     toast.success("Connexion réussie");
     navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
   }
-
-  // --- inscription ---
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    username: "",
-    firstName: "",
-    lastName: "",
-    country: "Cote d'Ivoire",
-    level: "Amateur",
-  });
 
   function set<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
