@@ -13,7 +13,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { registerServiceWorker } from "@/lib/register-sw";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "SKILL2CASH — Duels eFootball 1v1 en argent réel" },
       {
         name: "description",
@@ -87,10 +86,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Défie d'autres joueurs eFootball en 1v1 avec de vrais enjeux en FCFA. Résultats validés par consensus. NO SKILL. NO CASH.",
       },
       { name: "author", content: "SKILL2CASH" },
-      { name: "theme-color", content: "#8b5cf6" },
-      { name: "mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { property: "og:title", content: "SKILL2CASH — Duels eFootball 1v1 en argent réel" },
       {
         property: "og:description",
@@ -111,8 +106,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/icon-192x192.png" },
-      { rel: "manifest", href: "/manifest.json" },
     ],
   }),
   shellComponent: RootShell,
@@ -140,9 +133,6 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    // Enregistrer le service worker PWA
-    registerServiceWorker();
-
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();

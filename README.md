@@ -655,25 +655,29 @@ Create a production-ready, secure, and scalable platform that follows modern bes
 
 
 N'oublie pas, n'oublie pas, c'est en français. En français, en français, en français
+Exemple d'environnement local:
+
+```env
 NODE_ENV=development
 PORT=5000
-MONGO_URI=mongodb+srv://onexdelux_db_user:GcDqm9F47tsV5P5A@cluster0.utouxia.mongodb.net/?appName=Cluster0
-JWT_SECRET=mpop5765
+MONGO_URI=<your-mongodb-uri>
+JWT_SECRET=<your-secret>
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
 PLATFORM_WALLET_ID=platform
 AI_BASE_URL=https://aimodelapi.onrender.com/v1
-AI_API_KEY=devx-s3lkpld19bvhbsv2ex5omi1b2vjet5a5
+AI_API_KEY=<your-api-key>
 AI_MODEL=devx
 AI_MAX_TOKENS=700
 AI_ASSISTANT_ROLE=admin
-ADMIN_USERNAME=onexdelux1
-ADMIN_EMAIL=onexdelux@gmail.com
-ADMIN_PASSWORD=66240702Mkings
-ADMIN_COUNTRY=Cote d'Ivoire
+ADMIN_USERNAME=<admin-username>
+ADMIN_EMAIL=<admin-email>
+ADMIN_PASSWORD=<admin-password>
+ADMIN_COUNTRY=<admin-country>
 ADMIN_LEVEL=Elite
-ADMIN_EFOOTBALL_USERNAME=onexdelux1
-TELEGRAM_BOT_TOKEN=@secret:TELEGRAM_BOT_TOKEN
+ADMIN_EFOOTBALL_USERNAME=<admin-efootball-username>
+TELEGRAM_BOT_TOKEN=<optional-token>
+```
 
 This project was built with [Lovable](https://lovable.dev).
 

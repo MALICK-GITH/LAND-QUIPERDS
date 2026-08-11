@@ -1,4 +1,3 @@
-// @ts-nocheck - Server-side only file using Node.js crypto module
 import { createHash, timingSafeEqual } from "node:crypto";
 
 /** Appelle l'API Telegram Bot avec le token stocké côté serveur. */
