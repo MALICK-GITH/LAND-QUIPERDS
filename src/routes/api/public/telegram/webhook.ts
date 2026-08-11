@@ -13,6 +13,10 @@ const AIDE = [
   "/aide — afficher ce menu",
 ].join("\n");
 
+function hasSupabaseAdminConfig(): boolean {
+  return !!(process.env["SUPABASE_URL"] && process.env["SUPABASE_SERVICE_ROLE_KEY"]);
+}
+
 export const Route = createFileRoute("/api/public/telegram/webhook")({
   server: {
     handlers: {
@@ -35,13 +39,35 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
         if (typeof chatId !== "number") return Response.json({ ok: true, ignored: true });
         const cid: number = chatId;
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
         const [rawCmd, ...rest] = text.split(/\s+/);
         const cmd = (rawCmd ?? "").toLowerCase().replace(/@.*$/, "");
         const arg = (rest[0] ?? "").toUpperCase();
 
+        const needsDatabase =
+          cmd === "/lier" ||
+          (cmd === "/start" && !!arg) ||
+          cmd === "/delier" ||
+          cmd === "/solde" ||
+          cmd === "/duels" ||
+          cmd === "/defis";
+
+        if (needsDatabase && !hasSupabaseAdminConfig()) {
+          console.error(
+            "[Telegram] SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY manquant: liaison Telegram désactivée.",
+          );
+          await tgSend(
+            cid,
+            "Le robot est bien en ligne, mais la liaison au système n'est pas encore configurée côté serveur. Reviens après la configuration de Supabase.",
+          );
+          return Response.json({ ok: true, skipped: true });
+        }
+
+        const { supabaseAdmin } = needsDatabase
+          ? await import("@/integrations/supabase/client.server")
+          : { supabaseAdmin: null };
+
         async function linkedUser(): Promise<{ id: string; username: string } | null> {
+          if (!supabaseAdmin) return null;
           const { data } = await supabaseAdmin
             .from("profiles")
             .select("id, username")
