@@ -42,12 +42,34 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
+    let active = true;
     void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/tableau-de-bord", replace: true });
+      if (!active) return;
+      if (data.session) {
+        navigate({ to: "/tableau-de-bord", replace: true });
+        return;
+      }
+      setCheckingSession(false);
     });
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        navigate({ to: "/tableau-de-bord", replace: true });
+        return;
+      }
+      setCheckingSession(false);
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, [navigate]);
+
+  if (checkingSession) {
+    return <div className="grid-lines min-h-screen bg-background" />;
+  }
 
   // --- connexion ---
   const [loginEmail, setLoginEmail] = useState("");

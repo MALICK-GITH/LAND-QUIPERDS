@@ -56,23 +56,37 @@ const STEPS = [
 function Landing() {
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   // Session déjà ouverte (retour sur le site) : on renvoie directement dans l'app.
   useEffect(() => {
     let active = true;
     void supabase.auth.getSession().then(({ data }) => {
-      if (!active || !data.session) return;
-      setSignedIn(true);
-      void navigate({ to: "/tableau-de-bord", replace: true });
+      if (!active) return;
+      if (data.session) {
+        setSignedIn(true);
+        void navigate({ to: "/tableau-de-bord", replace: true });
+        return;
+      }
+      setCheckingSession(false);
     });
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) setSignedIn(true);
+      if (session) {
+        setSignedIn(true);
+        void navigate({ to: "/tableau-de-bord", replace: true });
+        return;
+      }
+      setCheckingSession(false);
     });
     return () => {
       active = false;
       data.subscription.unsubscribe();
     };
   }, [navigate]);
+
+  if (checkingSession) {
+    return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <div className="min-h-screen">
