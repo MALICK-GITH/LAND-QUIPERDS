@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Coins, Gavel, ShieldCheck, Swords, Vote, Wallet } from "lucide-react";
+import { Coins, Gavel, MessageCircle, ShieldCheck, Swords, Vote, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/skill2cash/logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/EyJCcsTNX2z2qEgqYMj9iR?s=cl&p=a&mlu=4";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -113,6 +115,17 @@ function Landing() {
             <Button asChild size="lg" variant="outline">
               <Link to="/classement">Voir le classement</Link>
             </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200"
+            >
+              <a href={WHATSAPP_GROUP_URL} target="_blank" rel="noreferrer">
+                <MessageCircle className="mr-2 size-4" />
+                Groupe WhatsApp
+              </a>
+            </Button>
           </div>
         </div>
       </section>
@@ -166,6 +179,17 @@ function Landing() {
 
       <footer className="py-10 text-center font-mono text-[10px] tracking-[0.25em] text-muted-foreground">
         SKILL2CASH © {new Date().getFullYear()} — JOUE RESPONSABLE. RÉSERVÉ AUX 18 ANS ET PLUS.
+        <div className="mt-4">
+          <a
+            href={WHATSAPP_GROUP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 font-display text-[11px] tracking-[0.2em] text-emerald-200 transition-colors hover:bg-emerald-500/20 hover:text-white"
+          >
+            <MessageCircle className="size-3.5" />
+            Rejoindre le groupe WhatsApp
+          </a>
+        </div>
       </footer>
     </div>
   );
