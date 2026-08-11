@@ -1,18 +1,36 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/skill2cash/app-shell";
+import { useSession } from "@/hooks/use-s2c";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
-  },
-  component: () => (
+  component: AuthenticatedLayout,
+});
+
+function AuthenticatedLayout() {
+  const navigate = useNavigate();
+  const { user, loading } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      void navigate({ to: "/auth", replace: true });
+    }
+  }, [loading, navigate, user]);
+
+  if (loading) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  if (!user) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  return (
     <AppShell>
       <Outlet />
     </AppShell>
-  ),
-});
+  );
+}
