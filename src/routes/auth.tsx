@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/use-s2c";
 import { getLastAuthRoute } from "@/lib/resume-route";
 import { errMessage } from "@/lib/s2c";
 
@@ -43,7 +44,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const { user, loading: sessionLoading } = useSession();
   // --- connexion ---
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -60,29 +61,11 @@ function AuthPage() {
   });
 
   useEffect(() => {
-    let active = true;
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      if (data.session) {
-        navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
-        return;
-      }
-      setCheckingSession(false);
-    });
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
-        return;
-      }
-      setCheckingSession(false);
-    });
-    return () => {
-      active = false;
-      data.subscription.unsubscribe();
-    };
-  }, [navigate]);
+    if (!user) return;
+    navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
+  }, [navigate, user]);
 
-  if (checkingSession) {
+  if (sessionLoading) {
     return <div className="grid-lines min-h-screen bg-background" />;
   }
 

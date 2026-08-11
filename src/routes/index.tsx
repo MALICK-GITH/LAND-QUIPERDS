@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Coins, Gavel, MessageCircle, ShieldCheck, Swords, Vote, Wallet } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Logo } from "@/components/skill2cash/logo";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/use-s2c";
 import { getLastAuthRoute } from "@/lib/resume-route";
 
 const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/EyJCcsTNX2z2qEgqYMj9iR?s=cl&p=a&mlu=4";
@@ -56,36 +56,14 @@ const STEPS = [
 
 function Landing() {
   const navigate = useNavigate();
-  const [signedIn, setSignedIn] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const { user, loading: sessionLoading } = useSession();
 
-  // Session déjà ouverte (retour sur le site) : on renvoie directement dans l'app.
   useEffect(() => {
-    let active = true;
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      if (data.session) {
-        setSignedIn(true);
-        void navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
-        return;
-      }
-      setCheckingSession(false);
-    });
-    const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) {
-        setSignedIn(true);
-        void navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
-        return;
-      }
-      setCheckingSession(false);
-    });
-    return () => {
-      active = false;
-      data.subscription.unsubscribe();
-    };
-  }, [navigate]);
+    if (!user) return;
+    void navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
+  }, [navigate, user]);
 
-  if (checkingSession) {
+  if (sessionLoading) {
     return <div className="min-h-screen bg-background" />;
   }
 
@@ -94,7 +72,7 @@ function Landing() {
       <header className="border-b border-border/60">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4">
           <Logo />
-          {signedIn ? (
+          {user ? (
             <Button asChild>
               <Link to="/tableau-de-bord">Mon tableau de bord</Link>
             </Button>
@@ -125,7 +103,7 @@ function Landing() {
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" className="pulse-ring">
-              <Link to={signedIn ? "/tableau-de-bord" : "/auth"}>Entrer dans l'arène</Link>
+              <Link to={user ? "/tableau-de-bord" : "/auth"}>Entrer dans l'arène</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link to="/classement">Voir le classement</Link>

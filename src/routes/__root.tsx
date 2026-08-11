@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useMe, useSession } from "@/hooks/use-s2c";
 
 function NotFoundComponent() {
   return (
@@ -144,9 +145,17 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <WarmupQueries />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster position="top-center" />
     </QueryClientProvider>
   );
+}
+
+function WarmupQueries() {
+  useSession();
+  useMe();
+
+  return null;
 }
