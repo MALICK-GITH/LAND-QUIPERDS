@@ -38,6 +38,8 @@ Puis renseigne :
 | `VITE_SUPABASE_URL` / `SUPABASE_URL` | URL de l'API PostgreSQL/Supabase |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_PUBLISHABLE_KEY` | clé publique (navigateur + SSR) |
 | `SUPABASE_SERVICE_ROLE_KEY` | clé de service, serveur uniquement |
+| `APP_BASE_URL` | URL publique du site, utilisée pour les liens et le webhook Telegram |
+| `TELEGRAM_BOT_TOKEN` | token du bot Telegram officiel |
 | `LOVABLE_API_KEY` | assistant IA (facultatif) |
 | `DISABLE_CSRF` | `true` si le front et l'API sont sur deux domaines |
 | `PORT` | port d'écoute en production (défaut `3000`) |
@@ -61,11 +63,13 @@ Ensuite, dans la configuration Auth du projet :
    (`https://mondomaine.com`, `https://mondomaine.com/auth`).
 3. Crée un bucket de stockage **privé** nommé `chat-evidence` (les politiques RLS
    sont déjà incluses dans les migrations).
+4. Configure `APP_BASE_URL` et `TELEGRAM_BOT_TOKEN` sur ton hébergement pour que
+   le bot puisse enregistrer automatiquement son webhook vers
+   `/api/public/telegram/webhook`.
 
 Les comptes administrateurs sont attribués automatiquement à l'inscription pour
-`onexdelux@gmail.com` et `jeaneric9610@gmail.com` (voir la fonction
-`handle_new_user`). Modifie cette liste dans une migration pour tes propres
-adresses.
+`onexdelux@gmail.com` (voir la fonction `handle_new_user`). Modifie cette liste
+dans une migration pour tes propres adresses.
 
 ## 5. Lancer en développement
 
