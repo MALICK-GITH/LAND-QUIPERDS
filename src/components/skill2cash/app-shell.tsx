@@ -15,7 +15,7 @@ import {
   Wallet as WalletIcon,
   X,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
