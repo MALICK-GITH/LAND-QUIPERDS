@@ -1,28 +1,129 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="SKILL2CASH">
+  <defs>
+    <linearGradient id="shieldPurple" x1="96" y1="56" x2="416" y2="456" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8b5cf6" />
+      <stop offset="1" stop-color="#4c1d95" />
+    </linearGradient>
+    <linearGradient id="gold" x1="156" y1="72" x2="362" y2="440" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff7b8" />
+      <stop offset="0.22" stop-color="#f6c71a" />
+      <stop offset="0.55" stop-color="#d79d07" />
+      <stop offset="1" stop-color="#fff0a5" />
+    </linearGradient>
+    <radialGradient id="ball" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 173) rotate(90) scale(48)">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#d4d4d8" />
+    </radialGradient>
+    <radialGradient id="coin" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) rotate(90) scale(34)">
+      <stop offset="0" stop-color="#fff3b0" />
+      <stop offset="1" stop-color="#f5b301" />
+    </radialGradient>
+    <linearGradient id="shadow" x1="128" y1="120" x2="384" y2="384" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0a0a" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#0a0a0a" stop-opacity="0.46" />
+    </linearGradient>
+  </defs>
+
   <path
-    d="M256 40L408 108L378 360L256 472L134 360L104 108Z"
-    fill="#8b5cf6"
-  />
-  <path
-    d="M256 72L374 126L350 342L256 412L162 342L138 126Z"
-    fill="#0a0a0a"
-    fill-opacity="0.34"
-    stroke="#ede9fe"
-    stroke-opacity="0.35"
-    stroke-width="8"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M222 118H318L258 234H330L206 392L244 270H176L222 118Z"
-    fill="#ffffff"
-  />
-  <circle cx="346" cy="176" r="34" fill="#f59e0b"/>
-  <circle cx="346" cy="176" r="18" fill="#fef3c7"/>
-  <path
-    d="M256 40L408 108L378 360L256 472L134 360L104 108Z"
-    stroke="#f5d06f"
-    stroke-opacity="0.8"
+    d="M256 54L400 114L376 362L256 454L136 362L112 114Z"
+    fill="url(#shieldPurple)"
+    stroke="#2e1065"
     stroke-width="10"
     stroke-linejoin="round"
   />
+  <path
+    d="M256 84L376 136L356 344L256 420L156 344L136 136Z"
+    fill="#110722"
+    stroke="#f5d06f"
+    stroke-opacity="0.8"
+    stroke-width="8"
+    stroke-linejoin="round"
+  />
+  <path d="M156 344L256 420L356 344L328 372L256 404L184 372Z" fill="url(#shadow)" opacity="0.9" />
+
+  <path
+    d="M221 122H291C303 122 312 131 312 143V174C312 224 278 256 256 256C234 256 200 224 200 174V143C200 131 209 122 221 122Z"
+    fill="url(#gold)"
+    stroke="#fff3b0"
+    stroke-width="6"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M179 148L198 160L192 202L170 192C161 188 155 178 157 168C159 157 169 149 179 148Z"
+    fill="url(#gold)"
+    stroke="#fef3c7"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M333 148L314 160L320 202L342 192C351 188 357 178 355 168C353 157 343 149 333 148Z"
+    fill="url(#gold)"
+    stroke="#fef3c7"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <circle cx="256" cy="166" r="38" fill="url(#ball)" stroke="#2e1065" stroke-width="8" />
+  <path
+    d="M240 141L256 134L272 141L276 157L267 171H245L236 157L240 141Z"
+    fill="#2e1065"
+  />
+  <path
+    d="M222 157L236 144L245 157L238 174L220 174L216 163Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M290 157L276 144L267 157L274 174L292 174L296 163Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M227 180L241 174L251 187L245 203L228 206L219 193Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M285 180L271 174L261 187L267 203L284 206L293 193Z"
+    fill="#ffffff"
+  />
+  <path d="M256 204L244 228H268L256 204Z" fill="#2e1065" />
+
+  <path
+    d="M255 246L231 292H281L255 338L307 338L236 392L251 344H205L255 246Z"
+    fill="#ffffff"
+    stroke="#fef3c7"
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+
+  <ellipse cx="166" cy="220" rx="38" ry="28" transform="rotate(16 166 220)" fill="url(#coin)" stroke="#fff3b0" stroke-width="6" />
+  <ellipse cx="346" cy="220" rx="38" ry="28" transform="rotate(-16 346 220)" fill="url(#coin)" stroke="#fff3b0" stroke-width="6" />
+  <ellipse cx="176" cy="336" rx="38" ry="28" transform="rotate(-18 176 336)" fill="url(#coin)" stroke="#fff3b0" stroke-width="6" />
+  <ellipse cx="336" cy="336" rx="38" ry="28" transform="rotate(18 336 336)" fill="url(#coin)" stroke="#fff3b0" stroke-width="6" />
+  <path d="M140 336L126 342L132 352L147 346Z" fill="#fff3b0" />
+  <path d="M364 336L378 342L372 352L357 346Z" fill="#fff3b0" />
+
+  <path d="M123 164L151 186L134 198L106 176Z" fill="#f6c71a" />
+  <path d="M389 164L361 186L378 198L406 176Z" fill="#f6c71a" />
+  <path d="M127 158L156 168L149 179L120 168Z" fill="#fff7b8" />
+  <path d="M385 158L356 168L363 179L392 168Z" fill="#fff7b8" />
+
+  <path
+    d="M166 116L198 104L190 142L173 148L166 116Z"
+    fill="#f5d06f"
+  />
+  <path
+    d="M346 116L314 104L322 142L339 148L346 116Z"
+    fill="#f5d06f"
+  />
+  <path d="M245 104H267L262 126H250L245 104Z" fill="#f5d06f" />
+
+  <path
+    d="M141 128L126 130L116 115L128 110L141 128Z"
+    fill="#fef3c7"
+  />
+  <path
+    d="M371 128L386 130L396 115L384 110L371 128Z"
+    fill="#fef3c7"
+  />
+  <path d="M109 210L119 194L128 198L118 214Z" fill="#fff3b0" />
+  <path d="M403 210L393 194L384 198L394 214Z" fill="#fff3b0" />
 </svg>
