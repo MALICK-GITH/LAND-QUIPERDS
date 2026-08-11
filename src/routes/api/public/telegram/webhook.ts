@@ -98,7 +98,10 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
 
         if (cmd === "/lier" || cmd === "/start") {
           if (!arg) {
-            await tgSend(cid, "Envoie <code>/lier TONCODE</code> avec le code affiché sur ton profil.");
+            await tgSend(
+              cid,
+              "Envoie <code>/lier TONCODE</code> avec le code affiché sur ton profil.",
+            );
             return Response.json({ ok: true });
           }
           const { data: code } = await supabaseAdmin
@@ -107,9 +110,12 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
             .eq("code", arg)
             .maybeSingle();
 
-          const row = code as
-            | { code: string; user_id: string; expires_at: string; used_at: string | null }
-            | null;
+          const row = code as {
+            code: string;
+            user_id: string;
+            expires_at: string;
+            used_at: string | null;
+          } | null;
           if (!row || row.used_at || new Date(row.expires_at) < new Date()) {
             await tgSend(cid, "❌ Code invalide ou expiré. Génère un nouveau code sur ton profil.");
             return Response.json({ ok: true });
@@ -155,7 +161,10 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
 
         const me = await linkedUser();
         if (!me) {
-          await tgSend(cid, "Ton Telegram n'est pas encore lié. Envoie <code>/lier TONCODE</code>.");
+          await tgSend(
+            cid,
+            "Ton Telegram n'est pas encore lié. Envoie <code>/lier TONCODE</code>.",
+          );
           return Response.json({ ok: true });
         }
 
@@ -192,7 +201,7 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
             .from("duels")
             .select("id, amount, status")
             .or(`player1_id.eq.${me.id},player2_id.eq.${me.id}`)
-            .in("status", ["active", "dispute"])
+            .in("status", ["active", "waiting_votes", "dispute"])
             .order("created_at", { ascending: false })
             .limit(10);
           const rows = (data ?? []) as { id: string; amount: number; status: string }[];
@@ -213,8 +222,8 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
           const { data } = await supabaseAdmin
             .from("challenges")
             .select("id, amount, status")
-            .or(`challenger_id.eq.${me.id},opponent_id.eq.${me.id}`)
-            .eq("status", "pending")
+            .or(`challenger_id.eq.${me.id},challenged_id.eq.${me.id}`)
+            .in("status", ["pending", "counter_offer"])
             .order("created_at", { ascending: false })
             .limit(10);
           const rows = (data ?? []) as { id: string; amount: number }[];
