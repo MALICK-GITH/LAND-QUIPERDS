@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe, useNotifications } from "@/hooks/use-s2c";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
+import { clearLastAuthRoute, setLastAuthRoute } from "@/lib/resume-route";
 import { fcfa, relativeFr } from "@/lib/s2c";
 import { cn } from "@/lib/utils";
 import {
@@ -51,11 +52,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    setLastAuthRoute(pathname);
+  }, [pathname]);
+
   const unread = (notifications.data ?? []).filter((n) => !n.is_read).length;
 
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
+    clearLastAuthRoute();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }

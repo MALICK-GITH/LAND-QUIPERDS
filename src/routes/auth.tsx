@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { getLastAuthRoute } from "@/lib/resume-route";
 import { errMessage } from "@/lib/s2c";
 
 export const Route = createFileRoute("/auth")({
@@ -49,14 +50,14 @@ function AuthPage() {
     void supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
       if (data.session) {
-        navigate({ to: "/tableau-de-bord", replace: true });
+        navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
         return;
       }
       setCheckingSession(false);
     });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        navigate({ to: "/tableau-de-bord", replace: true });
+        navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
         return;
       }
       setCheckingSession(false);
@@ -88,7 +89,7 @@ function AuthPage() {
       return;
     }
     toast.success("Connexion réussie");
-    navigate({ to: "/tableau-de-bord", replace: true });
+    navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
   }
 
   // --- inscription ---
@@ -142,7 +143,7 @@ function AuthPage() {
       return;
     }
     toast.success("Bienvenue dans l'arène !");
-    navigate({ to: "/tableau-de-bord", replace: true });
+    navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
   }
 
   async function handleGoogle(): Promise<void> {

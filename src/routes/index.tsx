@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/skill2cash/logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { getLastAuthRoute } from "@/lib/resume-route";
 
 const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/EyJCcsTNX2z2qEgqYMj9iR?s=cl&p=a&mlu=4";
 
@@ -65,7 +66,7 @@ function Landing() {
       if (!active) return;
       if (data.session) {
         setSignedIn(true);
-        void navigate({ to: "/tableau-de-bord", replace: true });
+        void navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
         return;
       }
       setCheckingSession(false);
@@ -73,7 +74,7 @@ function Landing() {
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session) {
         setSignedIn(true);
-        void navigate({ to: "/tableau-de-bord", replace: true });
+        void navigate({ to: getLastAuthRoute() ?? "/tableau-de-bord", replace: true });
         return;
       }
       setCheckingSession(false);
