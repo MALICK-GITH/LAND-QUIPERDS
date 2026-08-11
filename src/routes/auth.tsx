@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { errMessage } from "@/lib/s2c";
 
@@ -125,15 +124,16 @@ function AuthPage() {
   }
 
   async function handleGoogle(): Promise<void> {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
     });
-    if (result.error) {
+    if (error) {
       toast.error("Connexion Google impossible pour le moment.");
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/tableau-de-bord", replace: true });
   }
 
   return (
