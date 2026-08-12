@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { PageTitle } from "@/components/skill2cash/ui-bits";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useMe } from "@/hooks/use-s2c";
 import { askAssistant } from "@/lib/assistant.functions";
 import { errMessage } from "@/lib/s2c";
 
@@ -18,6 +19,13 @@ const SUGGESTIONS = [
   "Quelle est la commission sur un duel de 10 000 FCFA ?",
   "Combien de temps prend un retrait ?",
   "Que faire si mon adversaire triche ?",
+];
+
+const ADMIN_SUGGESTIONS = [
+  "Quels dépôts sont en attente ?",
+  "Combien de litiges sont ouverts ?",
+  "Quels comptes sont suspendus ?",
+  "Quelles validations demandent une action ?",
 ];
 
 export const Route = createFileRoute("/_authenticated/assistant")({
@@ -38,16 +46,28 @@ export const Route = createFileRoute("/_authenticated/assistant")({
 });
 
 function AssistantPage() {
+  const { isAdmin, profile } = useMe();
   const ask = useServerFn(askAssistant);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content:
-        "Salut ! Je suis l'assistant SKILL2CASH. Pose-moi une question sur les duels, les commissions, les dépôts ou les retraits.",
+      content: "Salut ! Je charge ton contexte sécurisé…",
     },
   ]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!profile?.username || messages.length !== 1) return;
+    setMessages([
+      {
+        role: "assistant",
+        content: isAdmin
+          ? "Salut admin. Je peux t'aider sur les validations, litiges, comptes et opérations du système."
+          : "Salut ! Je suis l'assistant SKILL2CASH. Pose-moi une question sur les duels, les commissions, les dépôts ou les retraits.",
+      },
+    ]);
+  }, [isAdmin, messages.length, profile?.username]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
@@ -69,7 +89,11 @@ function AssistantPage() {
     <div>
       <PageTitle
         title="Assistant"
-        subtitle="Une question sur les règles, les mises ou les paiements ? Demande."
+        subtitle={
+          isAdmin
+            ? `Mode administrateur · ${profile?.username ?? "compte connecté"}`
+            : `Mode joueur · ${profile?.username ?? "compte connecté"}`
+        }
       />
 
       <div className="panel flex h-[560px] flex-col clip-corner">
@@ -96,7 +120,7 @@ function AssistantPage() {
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-border/50 px-4 pt-3">
-          {SUGGESTIONS.map((s) => (
+          {(isAdmin ? ADMIN_SUGGESTIONS : SUGGESTIONS).map((s) => (
             <button
               key={s}
               type="button"
