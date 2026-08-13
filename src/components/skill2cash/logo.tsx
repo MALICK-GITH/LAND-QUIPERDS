@@ -3,7 +3,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
     <div className="flex items-center gap-2">
       <span className="relative flex size-9 items-center justify-center border border-primary/60 bg-primary/10 clip-corner">
         <img
-          src="/skill2cash-mark.svg"
+          src="/skill2cash-mark.png"
           alt=""
           aria-hidden="true"
           className="size-6 select-none"
