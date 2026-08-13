@@ -1,0 +1,2 @@
+UPDATE public.profiles SET telegram_chat_id = NULL, telegram_username = NULL, telegram_linked_at = NULL WHERE telegram_chat_id IS NOT NULL;
+UPDATE public.telegram_link_codes SET used_at = now() WHERE used_at IS NULL;
