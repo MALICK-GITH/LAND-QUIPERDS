@@ -22,25 +22,6 @@ import {
   type DuelMessage,
 } from "@/lib/s2c";
 
-const VICTORY_RULES = [
-  {
-    title: "Victoire",
-    body: "Tu as gagné si le score final te donne plus de buts que ton adversaire.",
-  },
-  {
-    title: "Match nul",
-    body: "Le duel est nul si les deux joueurs terminent avec le même score.",
-  },
-  {
-    title: "Défaite",
-    body: "Tu as perdu si ton adversaire marque plus de buts que toi.",
-  },
-  {
-    title: "Connexion perdue",
-    body: "Même sans réseau, ce bloc reste visible dans l'écran déjà ouvert. Le règlement du duel sera repris dès le retour de connexion.",
-  },
-] as const;
-
 export const Route = createFileRoute("/_authenticated/duels/$id")({
   head: () => ({
     meta: [
@@ -64,21 +45,7 @@ function DuelRoom() {
   const [showDispute, setShowDispute] = useState(false);
   const [attachment, setAttachment] = useState<File | null>(null);
   const [asEvidence, setAsEvidence] = useState(false);
-  const [isOnline, setIsOnline] = useState(
-    typeof window === "undefined" ? true : window.navigator.onLine,
-  );
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
 
   const duel = useQuery({
     queryKey: ["duel", id],
@@ -191,50 +158,8 @@ function DuelRoom() {
     onError: (e) => toast.error(errMessage(e)),
   });
 
-  if (duel.isLoading)
-    return (
-      <div>
-        <PageTitle
-          title="Chambre de duel"
-          subtitle={
-            isOnline
-              ? "Chargement du duel en cours."
-              : "Mode hors ligne : les règles de victoire restent visibles."
-          }
-          action={<StatusChip status={isOnline ? "active" : "cancelled"} label={isOnline ? "Chargement" : "Hors ligne"} />}
-        />
-        <VictoryRulesCard isOnline={isOnline} />
-        <EmptyState
-          text={
-            isOnline
-              ? "Chargement du duel…"
-              : "Connexion perdue. Les règles sont disponibles pendant la coupure réseau."
-          }
-        />
-      </div>
-    );
-  if (!duel.data)
-    return (
-      <div>
-        <PageTitle
-          title="Chambre de duel"
-          subtitle={
-            isOnline
-              ? "Connexion active, mais le duel n'a pas pu être chargé."
-              : "Mode hors ligne : les règles de victoire restent visibles."
-          }
-          action={<StatusChip status={isOnline ? "active" : "cancelled"} label={isOnline ? "Erreur de chargement" : "Hors ligne"} />}
-        />
-        <VictoryRulesCard isOnline={isOnline} />
-        <EmptyState
-          text={
-            isOnline
-              ? "Duel introuvable ou inaccessible."
-              : "Connexion perdue. Ouvre à nouveau le duel dès que le réseau revient."
-          }
-        />
-      </div>
-    );
+  if (duel.isLoading) return <EmptyState text="Chargement du duel…" />;
+  if (!duel.data) return <EmptyState text="Duel introuvable ou inaccessible." />;
 
   const d = duel.data.row;
   const profiles = duel.data.profiles;
@@ -260,15 +185,8 @@ function DuelRoom() {
       <PageTitle
         title={`${me?.username ?? "Toi"} vs ${opponent?.username ?? "adversaire"}`}
         subtitle={`Duel de ${fcfa(d.amount)} par joueur · ${dateFr(d.created_at)}`}
-        action={
-          <div className="flex flex-wrap items-center gap-2">
-            {!isOnline && <StatusChip status="cancelled" label="Hors ligne" />}
-            <StatusChip status={d.status} label={DUEL_STATUS_LABELS[d.status]} />
-          </div>
-        }
+        action={<StatusChip status={d.status} label={DUEL_STATUS_LABELS[d.status]} />}
       />
-
-      <VictoryRulesCard isOnline={isOnline} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Pot total" value={fcfa(pot)} tone="neon" />
@@ -486,32 +404,5 @@ function DuelRoom() {
         </section>
       </div>
     </div>
-  );
-}
-
-function VictoryRulesCard({ isOnline }: { isOnline: boolean }) {
-  return (
-    <section className="panel mb-6 p-4 clip-corner">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-bold tracking-widest uppercase">
-            Règles de victoire
-          </h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Affichage persistant dans la session, même si la connexion tombe.
-          </p>
-        </div>
-        <StatusChip status={isOnline ? "active" : "cancelled"} label={isOnline ? "En ligne" : "Hors ligne"} />
-      </div>
-
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
-        {VICTORY_RULES.map((rule) => (
-          <div key={rule.title} className="border border-border/70 bg-muted/10 p-3">
-            <p className="font-display text-sm font-bold text-primary">{rule.title}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{rule.body}</p>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
