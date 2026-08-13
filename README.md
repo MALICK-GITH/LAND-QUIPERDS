@@ -681,7 +681,7 @@ TELEGRAM_BOT_TOKEN=<optional-token>
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://duel-diva-dash.lovable.app
+**Live app**: https://moon-quiperd.vercel.app
 
 ## Build with Lovable
 

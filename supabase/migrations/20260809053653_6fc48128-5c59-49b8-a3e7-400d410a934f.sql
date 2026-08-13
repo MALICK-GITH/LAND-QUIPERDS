@@ -29,7 +29,7 @@ ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
 
 INSERT INTO public.app_settings(key, value) VALUES
   ('telegram_notify_secret', 'a09db0e787dfeb5376ad89daa5da7dddc33b81d5968dacc2'),
-  ('app_base_url', 'https://duel-diva-dash.lovable.app')
+  ('app_base_url', 'https://moon-quiperd.vercel.app')
 ON CONFLICT (key) DO NOTHING;
 
 -- Génère un code de liaison à usage unique pour le joueur connecté
