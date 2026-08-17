@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { playSound } from "@/lib/sounds";
 
 type NotifRow = {
   id: string;
@@ -11,6 +12,18 @@ type NotifRow = {
   body: string | null;
   link: string | null;
 };
+
+// Mapping des types de notifications vers les types de sons
+function getSoundType(notificationType: string): "notification" | "challenge" | "duel" | "message" | "win" | "loss" | "deposit" | "withdrawal" {
+  if (notificationType.includes("challenge")) return "challenge";
+  if (notificationType.includes("duel")) return "duel";
+  if (notificationType.includes("message")) return "message";
+  if (notificationType.includes("win") || notificationType.includes("victoire")) return "win";
+  if (notificationType.includes("loss") || notificationType.includes("défaite")) return "loss";
+  if (notificationType.includes("deposit") || notificationType.includes("dépôt")) return "deposit";
+  if (notificationType.includes("withdrawal") || notificationType.includes("retrait")) return "withdrawal";
+  return "notification";
+}
 
 export type PermissionState = "unsupported" | "default" | "granted" | "denied";
 
@@ -103,6 +116,10 @@ export function usePushNotifications(userId: string | undefined, onNotify?: () =
           const n = payload.new as NotifRow;
           onNotify?.();
           toast(n.title, { description: n.body ?? undefined });
+          
+          // Jouer le son approprié
+          playSound(getSoundType(n.type));
+          
           if (currentPermission() === "granted" && document.visibilityState !== "visible") {
             void showSystemNotification(n);
           } else if (currentPermission() === "granted") {

@@ -3,13 +3,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Volume2, VolumeX, Play, RotateCcw } from "lucide-react";
 
 import { EmptyState, PageTitle, StatCard, StatusChip } from "@/components/skill2cash/ui-bits";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMe } from "@/hooks/use-s2c";
+import { useSounds } from "@/hooks/use-sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { getTelegramBot } from "@/lib/telegram.functions";
 import {
@@ -19,6 +24,7 @@ import {
   fcfa,
   type UsernameChangeRequest,
 } from "@/lib/s2c";
+import { SOUND_LABELS, PRESET_LABELS, type SoundType, type SoundPreset } from "@/lib/sounds";
 
 export const Route = createFileRoute("/_authenticated/profil")({
   head: () => ({
@@ -45,6 +51,8 @@ function ProfilePage() {
   const [newUsername, setNewUsername] = useState("");
   const [reason, setReason] = useState("");
   const [linkCode, setLinkCode] = useState<string | null>(null);
+  
+  const sounds = useSounds();
 
   const fetchBot = useServerFn(getTelegramBot);
   const bot = useQuery({ queryKey: ["telegram-bot"], queryFn: () => fetchBot() });
@@ -328,6 +336,116 @@ function ProfilePage() {
                 </Button>
               )}
             </div>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-6 panel p-5 clip-corner">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-sm font-bold tracking-widest uppercase">
+              Sons de notification
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Personnalise les sons pour chaque type d'événement sur SKILL2CASH.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {sounds.settings.enabled ? (
+              <Volume2 className="size-4 text-primary" />
+            ) : (
+              <VolumeX className="size-4 text-muted-foreground" />
+            )}
+            <Switch
+              checked={sounds.settings.enabled}
+              onCheckedChange={sounds.setEnabled}
+            />
+          </div>
+        </div>
+
+        {sounds.settings.enabled && (
+          <div className="mt-4 space-y-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex-1 min-w-[200px]">
+                <Label>Preset de sons</Label>
+                <Select
+                  value={sounds.settings.preset}
+                  onValueChange={(value) => sounds.setPreset(value as SoundPreset)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(PRESET_LABELS).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex-1 min-w-[200px]">
+                <Label>Volume ({sounds.settings.volume}%)</Label>
+                <Slider
+                  value={[sounds.settings.volume]}
+                  onValueChange={([value]) => sounds.setVolume(value)}
+                  max={100}
+                  step={5}
+                  className="mt-2"
+                />
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={sounds.resetSettings}
+                disabled={sounds.settings.preset === "classic" && sounds.settings.volume === 70}
+              >
+                <RotateCcw className="mr-2 size-4" />
+                Réinitialiser
+              </Button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {Object.entries(SOUND_LABELS).map(([type, label]) => (
+                <div
+                  key={type}
+                  className="flex items-center justify-between rounded border border-border/50 bg-surface/50 p-3"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {sounds.settings.preset === "custom" && sounds.settings.customSounds[type as SoundType]
+                        ? "Personnalisé"
+                        : PRESET_LABELS[sounds.settings.preset]
+                      }
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => sounds.previewSound(type as SoundType)}
+                    title="Écouter"
+                  >
+                    <Play className="size-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            {sounds.settings.preset === "custom" && (
+              <div className="rounded border border-accent/50 bg-accent/10 p-3">
+                <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+                  MODE PERSONNALISÉ
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Pour configurer des sons personnalisés, tu peux ajouter tes propres fichiers audio dans le dossier
+                  <code className="mx-1 text-accent">public/sounds/custom/</code>
+                  et les sélectionner ici.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </section>
