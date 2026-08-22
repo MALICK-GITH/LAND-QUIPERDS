@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe, useSession } from "@/hooks/use-s2c";
+import { useUserPresence } from "@/hooks/use-user-presence";
 
 function NotFoundComponent() {
   return (
@@ -155,8 +156,9 @@ function RootComponent() {
 }
 
 function WarmupQueries() {
-  useSession();
-  useMe();
+  const session = useSession();
+  const me = useMe();
+  useUserPresence(me?.id || null);
 
   return null;
 }

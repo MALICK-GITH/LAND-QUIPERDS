@@ -460,7 +460,10 @@ export type Database = {
           first_name: string | null
           id: string
           is_banned: boolean
+          is_online: boolean
+          last_activity_at: string | null
           last_name: string | null
+          last_seen_at: string | null
           level: Database["public"]["Enums"]["user_level"]
           losses: number
           rank: number | null
@@ -486,7 +489,10 @@ export type Database = {
           first_name?: string | null
           id: string
           is_banned?: boolean
+          is_online?: boolean
+          last_activity_at?: string | null
           last_name?: string | null
+          last_seen_at?: string | null
           level?: Database["public"]["Enums"]["user_level"]
           losses?: number
           rank?: number | null
@@ -512,7 +518,10 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_banned?: boolean
+          is_online?: boolean
+          last_activity_at?: string | null
           last_name?: string | null
+          last_seen_at?: string | null
           level?: Database["public"]["Enums"]["user_level"]
           losses?: number
           rank?: number | null
@@ -885,6 +894,8 @@ export type Database = {
           username: string
         }[]
       }
+      mark_user_offline: { Args: { p_user_id: string }; Returns: undefined }
+      mark_user_online: { Args: { p_user_id: string }; Returns: undefined }
       mark_conversation_read: {
         Args: { p_conversation: string }
         Returns: undefined
