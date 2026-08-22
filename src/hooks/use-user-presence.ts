@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react'
-import { createClient } from '@/integrations/supabase/client'
+import { supabase } from '@/integrations/supabase/client'
 
 const HEARTBEAT_INTERVAL = 60000 // 1 minute
 const OFFLINE_THRESHOLD = 300000 // 5 minutes of inactivity
 
 export function useUserPresence(userId: string | null) {
-  const supabase = createClient()
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const visibilityChangeRef = useRef<(() => void) | null>(null)
 
