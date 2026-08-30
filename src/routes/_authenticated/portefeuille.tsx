@@ -7,6 +7,7 @@ import { EmptyState, PageTitle, StatCard, StatusChip } from "@/components/skill2
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ExternalLink } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -89,7 +90,9 @@ function WalletPage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Dépôt soumis. Validation sous 24 h.");
+      toast.success(
+        "Dépôt soumis ! N'oublie pas d'envoyer la capture dans le groupe WhatsApp pour accélérer la validation."
+      );
       setDep((s) => ({ ...s, reference: "" }));
       void qc.invalidateQueries();
     },
@@ -145,6 +148,27 @@ function WalletPage() {
               Wave ou MTN Money. N'envoie jamais d'argent à un autre numéro : tout dépôt fait
               ailleurs est définitivement perdu.
             </p>
+            <p className="mt-2 text-xs font-semibold text-primary">
+              💰 Montant minimum de dépôt : 500 FCFA
+            </p>
+          </div>
+          <div className="mt-3 border border-accent/40 bg-accent/10 p-3">
+            <p className="font-display text-xs font-bold tracking-widest uppercase text-accent">
+              ⚠️ Important après validation
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Après avoir déclaré ton dépôt ici, envoie la capture d'écran de ta transaction dans le
+              groupe WhatsApp dédié au système pour accélérer la validation par l'administrateur.
+            </p>
+            <a
+              href="https://chat.whatsapp.com/EyJCcsTNX2q2qEgqYMj9iR?s=cl&p=a&mlu=4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Rejoindre le groupe WhatsApp
+            </a>
           </div>
           <div className="mt-4 space-y-3">
             <div>
@@ -156,6 +180,11 @@ function WalletPage() {
                 value={dep.amount}
                 onChange={(e) => setDep((s) => ({ ...s, amount: e.target.value }))}
               />
+              {Number(dep.amount) > 0 && Number(dep.amount) < 500 && (
+                <p className="mt-1 text-xs text-destructive">
+                  ⚠️ Le montant minimum de dépôt est de 500 FCFA
+                </p>
+              )}
             </div>
             <div>
               <Label>Moyen de paiement</Label>
