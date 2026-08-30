@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Crown } from "lucide-react";
 
 import { EmptyState, PageTitle, StatusChip } from "@/components/skill2cash/ui-bits";
+import { UserPresenceBadge } from "@/components/user-presence-badge";
 import { useMe } from "@/hooks/use-s2c";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, type Profile } from "@/lib/s2c";
@@ -65,12 +66,19 @@ function LeaderboardPage() {
                 </span>
                 {i === 0 ? <Crown className="size-4 text-accent" /> : null}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-display text-sm font-bold text-primary">
-                    {p.username}
-                    {p.badge ? (
-                      <span className="ml-2 font-mono text-[10px] text-neon">{p.badge}</span>
-                    ) : null}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="truncate font-display text-sm font-bold text-primary">
+                      {p.username}
+                      {p.badge ? (
+                        <span className="ml-2 font-mono text-[10px] text-neon">{p.badge}</span>
+                      ) : null}
+                    </p>
+                    <UserPresenceBadge
+                      is_online={p.is_online}
+                      last_seen_at={p.last_seen_at}
+                      last_activity_at={p.last_activity_at}
+                    />
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {p.wins}V · {p.draws}N · {p.losses}D
                     {played ? ` · ${Math.round((p.wins / played) * 100)}%` : ""} · série{" "}

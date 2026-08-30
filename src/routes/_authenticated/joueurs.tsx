@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { UserPresenceBadge } from "@/components/user-presence-badge";
 import { useMe } from "@/hooks/use-s2c";
 import { supabase } from "@/integrations/supabase/client";
 import { errMessage, fcfa, type Profile } from "@/lib/s2c";
@@ -102,8 +103,15 @@ function PlayersPage() {
             return (
               <div key={p.id} className="panel p-4 clip-corner">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-display text-base font-bold text-primary">{p.username}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-display text-base font-bold text-primary">{p.username}</p>
+                      <UserPresenceBadge
+                        is_online={p.is_online}
+                        last_seen_at={p.last_seen_at}
+                        last_activity_at={p.last_activity_at}
+                      />
+                    </div>
                     <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                       {p.efootball_username} · {p.country}
                     </p>

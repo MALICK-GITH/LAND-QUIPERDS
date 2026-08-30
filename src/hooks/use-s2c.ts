@@ -70,7 +70,7 @@ export function useNotifications() {
 
   useEffect(() => {
     if (!user) return;
-    const channelName = `notif-stream-${user.id}-${crypto.randomUUID()}`;
+    const channelName = `notif-stream-${user.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const channel = supabase
       .channel(channelName)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" }, () => {
