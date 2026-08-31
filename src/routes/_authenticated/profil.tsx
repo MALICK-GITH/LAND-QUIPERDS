@@ -154,7 +154,7 @@ function ProfilePage() {
         <StatCard
           label="Réputation"
           value={`${profile?.reputation ?? 100}/100`}
-          hint={`${profile?.reports_count ?? 0} signalement(s)`}
+          hint={`${profile?.reports_count ?? 0} signalement(s) · ${profile?.disputes_opened ?? 0} contestation(s)`}
           tone={(profile?.reputation ?? 100) < 60 ? "danger" : "default"}
         />
       </div>

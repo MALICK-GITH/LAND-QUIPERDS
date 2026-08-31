@@ -455,6 +455,9 @@ export type Database = {
           created_at: string
           current_streak: number
           deleted_at: string | null
+          disputes_lost: number
+          disputes_opened: number
+          disputes_won: number
           draws: number
           efootball_username: string
           first_name: string | null
@@ -462,6 +465,7 @@ export type Database = {
           is_banned: boolean
           is_online: boolean
           last_activity_at: string | null
+          last_dispute_at: string | null
           last_name: string | null
           last_seen_at: string | null
           level: Database["public"]["Enums"]["user_level"]
@@ -484,6 +488,9 @@ export type Database = {
           created_at?: string
           current_streak?: number
           deleted_at?: string | null
+          disputes_lost?: number
+          disputes_opened?: number
+          disputes_won?: number
           draws?: number
           efootball_username: string
           first_name?: string | null
@@ -491,6 +498,7 @@ export type Database = {
           is_banned?: boolean
           is_online?: boolean
           last_activity_at?: string | null
+          last_dispute_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           level?: Database["public"]["Enums"]["user_level"]
@@ -513,6 +521,9 @@ export type Database = {
           created_at?: string
           current_streak?: number
           deleted_at?: string | null
+          disputes_lost?: number
+          disputes_opened?: number
+          disputes_won?: number
           draws?: number
           efootball_username?: string
           first_name?: string | null
@@ -520,6 +531,7 @@ export type Database = {
           is_banned?: boolean
           is_online?: boolean
           last_activity_at?: string | null
+          last_dispute_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           level?: Database["public"]["Enums"]["user_level"]

@@ -128,6 +128,25 @@ function PlayersPage() {
                   {played ? `${Math.round((p.wins / played) * 100)}% de réussite` : "Aucun duel joué"}{" "}
                   · Gains {fcfa(p.total_earnings)}
                 </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-muted-foreground">Réputation:</span>
+                    <span 
+                      className={`text-[10px] font-semibold ${
+                        p.reputation >= 80 ? 'text-green-500' : 
+                        p.reputation >= 60 ? 'text-yellow-500' : 
+                        p.reputation >= 40 ? 'text-orange-500' : 'text-red-500'
+                      }`}
+                    >
+                      {p.reputation}/100
+                    </span>
+                  </div>
+                  {p.disputes_opened > 0 && (
+                    <span className="text-[10px] text-muted-foreground">
+                      · {p.disputes_opened} contestation(s)
+                    </span>
+                  )}
+                </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <Button size="sm" onClick={() => setTarget(p)}>
                     <Target className="size-4" /> Défier
