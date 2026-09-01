@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-s2c";
 import { getLastAuthRoute } from "@/lib/resume-route";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/EyJCcsTNX2z2qEgqYMj9iR?s=cl&p=a&mlu=4";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/LFhxJLvRGcO0zkXBM4ndTF?s=cl&p=a&ilr=1";
 
 export const Route = createFileRoute("/")({
   head: () => ({
