@@ -161,7 +161,7 @@ function WalletPage() {
               groupe WhatsApp dédié au système pour accélérer la validation par l'administrateur.
             </p>
             <a
-              href="https://chat.whatsapp.com/EyJCcsTNX2q2qEgqYMj9iR?s=cl&p=a&mlu=4"
+              href="https://chat.whatsapp.com/LFhxJLvRGcO0zkXBM4ndTF"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
