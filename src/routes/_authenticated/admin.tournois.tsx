@@ -64,6 +64,25 @@ function AdminTournamentsPage() {
     rules: "",
   });
 
+  // Validation du formulaire
+  const isFormValid = () => {
+    const hasBasicFields = 
+      createForm.name.trim().length > 0 &&
+      Number(createForm.buy_in_amount) >= 500 &&
+      Number(createForm.max_participants) >= 4 &&
+      Number(createForm.min_participants) >= 2 &&
+      Number(createForm.min_participants) <= Number(createForm.max_participants) &&
+      createForm.registration_end_at.length > 0;
+
+    if (!hasBasicFields) return false;
+
+    // Validation des dates
+    const start = createForm.registration_start_at ? new Date(createForm.registration_start_at) : new Date();
+    const end = new Date(createForm.registration_end_at);
+    
+    return end > start;
+  };
+
   const tournaments = useQuery({
     queryKey: ["admin-tournaments"],
     enabled: isAdmin,
@@ -80,18 +99,50 @@ function AdminTournamentsPage() {
 
   const createTournament = useMutation({
     mutationFn: async () => {
+      // Validation côté client avant l'appel
+      if (!createForm.name.trim()) {
+        throw new Error("Le nom du tournoi est obligatoire");
+      }
+      if (Number(createForm.buy_in_amount) < 500) {
+        throw new Error("Le buy-in minimum est de 500 FCFA");
+      }
+      if (Number(createForm.max_participants) < 4) {
+        throw new Error("Le minimum de participants est 4");
+      }
+      if (Number(createForm.min_participants) < 2) {
+        throw new Error("Le minimum de participants est 2");
+      }
+      if (Number(createForm.min_participants) > Number(createForm.max_participants)) {
+        throw new Error("Le minimum ne peut pas être supérieur au maximum");
+      }
+      if (!createForm.registration_end_at) {
+        throw new Error("La date de fin d'inscription est obligatoire");
+      }
+      if (createForm.registration_start_at && createForm.registration_end_at) {
+        const start = new Date(createForm.registration_start_at);
+        const end = new Date(createForm.registration_end_at);
+        if (end <= start) {
+          throw new Error("La date de fin doit être après le début");
+        }
+      }
+
       const { error } = await supabase.rpc("create_tournament", {
         p_name: createForm.name.trim(),
-        p_description: createForm.description.trim() || null,
-        p_tournament_type: createForm.tournament_type,
         p_buy_in_amount: Number(createForm.buy_in_amount),
         p_max_participants: Number(createForm.max_participants),
+        p_registration_end_at: createForm.registration_end_at,
+        p_description: createForm.description.trim() || null,
+        p_tournament_type: createForm.tournament_type,
         p_commission_rate: Number(createForm.commission_rate),
         p_min_participants: Number(createForm.min_participants),
         p_registration_start_at: createForm.registration_start_at || new Date().toISOString(),
-        p_registration_end_at: createForm.registration_end_at,
         p_scheduled_start_at: createForm.scheduled_start_at || null,
         p_rules: createForm.rules.trim() || null,
+        p_prize_distribution: {
+          winner: 0.7,
+          runner_up: 0.2,
+          third_place: 0.1
+        },
       });
       if (error) throw error;
     },
@@ -187,12 +238,16 @@ function AdminTournamentsPage() {
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label>Nom du tournoi</Label>
+              <Label>Nom du tournoi *</Label>
               <Input
                 value={createForm.name}
                 onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
                 placeholder="Ex: Tournoi Elite #1"
+                required
               />
+              {!createForm.name.trim() && (
+                <p className="mt-1 text-xs text-destructive">Le nom est obligatoire</p>
+              )}
             </div>
             <div>
               <Label>Type de tournoi</Label>
@@ -211,14 +266,18 @@ function AdminTournamentsPage() {
               </Select>
             </div>
             <div>
-              <Label>Buy-in (FCFA)</Label>
+              <Label>Buy-in (FCFA) *</Label>
               <Input
                 type="number"
                 min="500"
                 step="500"
                 value={createForm.buy_in_amount}
                 onChange={(e) => setCreateForm({ ...createForm, buy_in_amount: e.target.value })}
+                required
               />
+              {Number(createForm.buy_in_amount) < 500 && (
+                <p className="mt-1 text-xs text-destructive">Minimum 500 FCFA</p>
+              )}
             </div>
             <div>
               <Label>Participants max</Label>
@@ -259,12 +318,16 @@ function AdminTournamentsPage() {
               />
             </div>
             <div>
-              <Label>Fin inscriptions</Label>
+              <Label>Fin inscriptions *</Label>
               <Input
                 type="datetime-local"
                 value={createForm.registration_end_at}
                 onChange={(e) => setCreateForm({ ...createForm, registration_end_at: e.target.value })}
+                required
               />
+              {!createForm.registration_end_at && (
+                <p className="mt-1 text-xs text-destructive">La date de fin est obligatoire</p>
+              )}
             </div>
             <div>
               <Label>Début programmé (optionnel)</Label>
@@ -296,9 +359,9 @@ function AdminTournamentsPage() {
           <div className="mt-4 flex gap-2">
             <Button
               onClick={() => createTournament.mutate()}
-              disabled={createTournament.isPending || !createForm.name.trim()}
+              disabled={createTournament.isPending || !isFormValid()}
             >
-              Créer le tournoi
+              {createTournament.isPending ? "Création..." : "Créer le tournoi"}
             </Button>
             <Button variant="outline" onClick={() => setShowCreateForm(false)}>
               Annuler

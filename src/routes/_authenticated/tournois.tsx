@@ -120,7 +120,7 @@ function TournamentsPage() {
         subtitle="Compétitions à élimination avec buy-in et prize pool."
         action={
           <Button asChild>
-            <Link to={isAdmin ? "/admin/tournois" : "/tournois/creation-info"}>
+            <Link to={isAdmin ? "/admin/tournois" : "/tournois/creation"}>
               <Plus className="size-4" /> Créer un tournoi
             </Link>
           </Button>

@@ -4,7 +4,7 @@ import { Shield, Mail, Trophy } from "lucide-react";
 import { PageTitle } from "@/components/skill2cash/ui-bits";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/_authenticated/tournois/creation-info")({
+export const Route = createFileRoute("/_authenticated/tournois/creation")({
   head: () => ({
     meta: [
       { title: "Création de tournois — SKILL2CASH" },
