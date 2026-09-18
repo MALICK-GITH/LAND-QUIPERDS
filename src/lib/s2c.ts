@@ -14,6 +14,80 @@ export type CommissionSetting = Database["public"]["Tables"]["commission_setting
 export type UsernameChangeRequest =
   Database["public"]["Tables"]["username_change_requests"]["Row"];
 
+// Types tournoi (temporaires, seront remplacés par les types Supabase après migration)
+export type TournamentType = 'single_elimination' | 'double_elimination' | 'round_robin';
+export type TournamentStatus = 'registration' | 'scheduled' | 'active' | 'completed' | 'cancelled';
+export type TournamentMatchStatus = 'scheduled' | 'active' | 'finished' | 'cancelled';
+export type TournamentRank = 'winner' | 'runner_up' | 'third_place' | 'fourth_place' | 'participant';
+
+export type Tournament = {
+  id: string;
+  name: string;
+  description: string | null;
+  tournament_type: TournamentType;
+  status: TournamentStatus;
+  buy_in_amount: number;
+  max_participants: number;
+  commission_rate: number;
+  prize_pool: number;
+  prize_distribution: Record<string, number>;
+  current_participants: number;
+  min_participants: number;
+  registration_start_at: string;
+  registration_end_at: string;
+  scheduled_start_at: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_by: string | null;
+  admin_note: string | null;
+  rules: string | null;
+  bracket_structure: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type TournamentRegistration = {
+  id: string;
+  tournament_id: string;
+  user_id: string;
+  status: 'registered' | 'withdrawn' | 'disqualified';
+  buy_in_paid: boolean;
+  buy_in_transaction_id: string | null;
+  final_rank: TournamentRank | null;
+  final_position: number | null;
+  winnings: number;
+  disqualified_reason: string | null;
+  admin_note: string | null;
+  registered_at: string;
+  updated_at: string;
+};
+
+export type TournamentMatch = {
+  id: string;
+  tournament_id: string;
+  player1_id: string | null;
+  player2_id: string | null;
+  winner_id: string | null;
+  round_number: number;
+  match_number: number;
+  bracket_position: string | null;
+  next_match_id: string | null;
+  loser_next_match_id: string | null;
+  status: TournamentMatchStatus;
+  player1_score: number;
+  player2_score: number;
+  is_draw: boolean;
+  duel_id: string | null;
+  scheduled_at: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  admin_note: string | null;
+  resolved_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 /** Formate un montant en FCFA (XOF). */
 export function fcfa(value: number | string | null | undefined): string {
   const n = Number(value ?? 0);
@@ -84,6 +158,36 @@ export const REQUEST_STATUS_LABELS: Record<string, string> = {
   pending: "En attente",
   approved: "Validé",
   rejected: "Refusé",
+};
+
+// Labels pour les tournois
+export const TOURNAMENT_TYPE_LABELS: Record<string, string> = {
+  single_elimination: 'Élimination simple',
+  double_elimination: 'Élimination double',
+  round_robin: 'Round Robin',
+};
+
+export const TOURNAMENT_STATUS_LABELS: Record<string, string> = {
+  registration: 'Inscriptions ouvertes',
+  scheduled: 'Programmé',
+  active: 'En cours',
+  completed: 'Terminé',
+  cancelled: 'Annulé',
+};
+
+export const TOURNAMENT_MATCH_STATUS_LABELS: Record<string, string> = {
+  scheduled: 'Programmé',
+  active: 'En cours',
+  finished: 'Terminé',
+  cancelled: 'Annulé',
+};
+
+export const TOURNAMENT_RANK_LABELS: Record<string, string> = {
+  winner: 'Vainqueur',
+  runner_up: 'Finaliste',
+  third_place: '3ème place',
+  fourth_place: '4ème place',
+  participant: 'Participant',
 };
 
 /** Traduit les erreurs Postgres/RPC en message lisible. */

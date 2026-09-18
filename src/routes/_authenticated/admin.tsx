@@ -182,6 +182,7 @@ function AdminPage() {
           <TabsTrigger value="withdrawals">Retraits</TabsTrigger>
           <TabsTrigger value="disputes">Litiges</TabsTrigger>
           <TabsTrigger value="usernames">Pseudos</TabsTrigger>
+          <TabsTrigger value="tournaments">Tournois</TabsTrigger>
           <TabsTrigger value="users">Comptes</TabsTrigger>
           <TabsTrigger value="admins">Administrateurs</TabsTrigger>
         </TabsList>
@@ -496,6 +497,19 @@ function AdminPage() {
           ) : (
             <EmptyState text="Aucune demande de pseudo." />
           )}
+        </TabsContent>
+
+        <TabsContent value="tournaments" className="mt-4 space-y-3">
+          <div className="panel p-4 clip-corner">
+            <p className="text-sm text-muted-foreground mb-3">
+              Gestion complète des tournois : création, brackets, résultats et participants.
+            </p>
+            <Button asChild>
+              <Link to="/admin/tournois">
+                Accéder à la gestion des tournois
+              </Link>
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="users" className="mt-4 space-y-3">
