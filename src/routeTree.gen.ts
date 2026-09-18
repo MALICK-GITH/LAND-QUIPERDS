@@ -21,8 +21,12 @@ import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPortefeuilleRouteImport } from './routes/_authenticated/portefeuille'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
+import { Route as AuthenticatedTournoisRouteImport } from './routes/_authenticated/tournois'
+import { Route as AuthenticatedAdminTournoisRouteImport } from './routes/_authenticated/admin.tournois'
 import { Route as AuthenticatedDuelsIndexRouteImport } from './routes/_authenticated/duels.index'
 import { Route as AuthenticatedDuelsIdRouteImport } from './routes/_authenticated/duels.$id'
+import { Route as AuthenticatedTournoisIdRouteImport } from './routes/_authenticated/tournois.$id'
+import { Route as AuthenticatedTournoisCreationInfoRouteImport } from './routes/_authenticated/tournois.creation-info'
 import { Route as ApiPublicTelegramNotifyRouteImport } from './routes/api/public/telegram/notify'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 
@@ -87,6 +91,17 @@ const AuthenticatedTableauDeBordRoute =
     path: '/tableau-de-bord',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTournoisRoute = AuthenticatedTournoisRouteImport.update({
+  id: '/tournois',
+  path: '/tournois',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminTournoisRoute =
+  AuthenticatedAdminTournoisRouteImport.update({
+    id: '/tournois',
+    path: '/tournois',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedDuelsIndexRoute = AuthenticatedDuelsIndexRouteImport.update({
   id: '/duels/',
   path: '/duels/',
@@ -97,6 +112,17 @@ const AuthenticatedDuelsIdRoute = AuthenticatedDuelsIdRouteImport.update({
   path: '/duels/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTournoisIdRoute = AuthenticatedTournoisIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedTournoisRoute,
+} as any)
+const AuthenticatedTournoisCreationInfoRoute =
+  AuthenticatedTournoisCreationInfoRouteImport.update({
+    id: '/creation-info',
+    path: '/creation-info',
+    getParentRoute: () => AuthenticatedTournoisRoute,
+  } as any)
 const ApiPublicTelegramNotifyRoute = ApiPublicTelegramNotifyRouteImport.update({
   id: '/api/public/telegram/notify',
   path: '/api/public/telegram/notify',
@@ -112,7 +138,7 @@ const ApiPublicTelegramWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assistant': typeof AuthenticatedAssistantRoute
   '/classement': typeof AuthenticatedClassementRoute
   '/defis': typeof AuthenticatedDefisRoute
@@ -121,7 +147,11 @@ export interface FileRoutesByFullPath {
   '/portefeuille': typeof AuthenticatedPortefeuilleRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
+  '/tournois': typeof AuthenticatedTournoisRouteWithChildren
+  '/admin/tournois': typeof AuthenticatedAdminTournoisRoute
   '/duels/$id': typeof AuthenticatedDuelsIdRoute
+  '/tournois/$id': typeof AuthenticatedTournoisIdRoute
+  '/tournois/creation-info': typeof AuthenticatedTournoisCreationInfoRoute
   '/duels/': typeof AuthenticatedDuelsIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
@@ -129,7 +159,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assistant': typeof AuthenticatedAssistantRoute
   '/classement': typeof AuthenticatedClassementRoute
   '/defis': typeof AuthenticatedDefisRoute
@@ -138,7 +168,11 @@ export interface FileRoutesByTo {
   '/portefeuille': typeof AuthenticatedPortefeuilleRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
+  '/tournois': typeof AuthenticatedTournoisRouteWithChildren
+  '/admin/tournois': typeof AuthenticatedAdminTournoisRoute
   '/duels/$id': typeof AuthenticatedDuelsIdRoute
+  '/tournois/$id': typeof AuthenticatedTournoisIdRoute
+  '/tournois/creation-info': typeof AuthenticatedTournoisCreationInfoRoute
   '/duels': typeof AuthenticatedDuelsIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
@@ -148,7 +182,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
   '/_authenticated/classement': typeof AuthenticatedClassementRoute
   '/_authenticated/defis': typeof AuthenticatedDefisRoute
@@ -157,7 +191,11 @@ export interface FileRoutesById {
   '/_authenticated/portefeuille': typeof AuthenticatedPortefeuilleRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
+  '/_authenticated/tournois': typeof AuthenticatedTournoisRouteWithChildren
+  '/_authenticated/admin/tournois': typeof AuthenticatedAdminTournoisRoute
   '/_authenticated/duels/$id': typeof AuthenticatedDuelsIdRoute
+  '/_authenticated/tournois/$id': typeof AuthenticatedTournoisIdRoute
+  '/_authenticated/tournois/creation-info': typeof AuthenticatedTournoisCreationInfoRoute
   '/_authenticated/duels/': typeof AuthenticatedDuelsIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
@@ -176,7 +214,11 @@ export interface FileRouteTypes {
     | '/portefeuille'
     | '/profil'
     | '/tableau-de-bord'
+    | '/tournois'
+    | '/admin/tournois'
     | '/duels/$id'
+    | '/tournois/$id'
+    | '/tournois/creation-info'
     | '/duels/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
@@ -193,7 +235,11 @@ export interface FileRouteTypes {
     | '/portefeuille'
     | '/profil'
     | '/tableau-de-bord'
+    | '/tournois'
+    | '/admin/tournois'
     | '/duels/$id'
+    | '/tournois/$id'
+    | '/tournois/creation-info'
     | '/duels'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
@@ -211,7 +257,11 @@ export interface FileRouteTypes {
     | '/_authenticated/portefeuille'
     | '/_authenticated/profil'
     | '/_authenticated/tableau-de-bord'
+    | '/_authenticated/tournois'
+    | '/_authenticated/admin/tournois'
     | '/_authenticated/duels/$id'
+    | '/_authenticated/tournois/$id'
+    | '/_authenticated/tournois/creation-info'
     | '/_authenticated/duels/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
@@ -311,6 +361,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTableauDeBordRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/tournois': {
+      id: '/_authenticated/tournois'
+      path: '/tournois'
+      fullPath: '/tournois'
+      preLoaderRoute: typeof AuthenticatedTournoisRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/tournois': {
+      id: '/_authenticated/admin/tournois'
+      path: '/tournois'
+      fullPath: '/admin/tournois'
+      preLoaderRoute: typeof AuthenticatedAdminTournoisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/duels/': {
       id: '/_authenticated/duels/'
       path: '/duels'
@@ -324,6 +388,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/duels/$id'
       preLoaderRoute: typeof AuthenticatedDuelsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tournois/$id': {
+      id: '/_authenticated/tournois/$id'
+      path: '/$id'
+      fullPath: '/tournois/$id'
+      preLoaderRoute: typeof AuthenticatedTournoisIdRouteImport
+      parentRoute: typeof AuthenticatedTournoisRoute
+    }
+    '/_authenticated/tournois/creation-info': {
+      id: '/_authenticated/tournois/creation-info'
+      path: '/creation-info'
+      fullPath: '/tournois/creation-info'
+      preLoaderRoute: typeof AuthenticatedTournoisCreationInfoRouteImport
+      parentRoute: typeof AuthenticatedTournoisRoute
     }
     '/api/public/telegram/notify': {
       id: '/api/public/telegram/notify'
@@ -342,8 +420,35 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminTournoisRoute: typeof AuthenticatedAdminTournoisRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminTournoisRoute: AuthenticatedAdminTournoisRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedTournoisRouteChildren {
+  AuthenticatedTournoisIdRoute: typeof AuthenticatedTournoisIdRoute
+  AuthenticatedTournoisCreationInfoRoute: typeof AuthenticatedTournoisCreationInfoRoute
+}
+
+const AuthenticatedTournoisRouteChildren: AuthenticatedTournoisRouteChildren = {
+  AuthenticatedTournoisIdRoute: AuthenticatedTournoisIdRoute,
+  AuthenticatedTournoisCreationInfoRoute:
+    AuthenticatedTournoisCreationInfoRoute,
+}
+
+const AuthenticatedTournoisRouteWithChildren =
+  AuthenticatedTournoisRoute._addFileChildren(
+    AuthenticatedTournoisRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
   AuthenticatedClassementRoute: typeof AuthenticatedClassementRoute
   AuthenticatedDefisRoute: typeof AuthenticatedDefisRoute
@@ -352,12 +457,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortefeuilleRoute: typeof AuthenticatedPortefeuilleRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedTableauDeBordRoute: typeof AuthenticatedTableauDeBordRoute
+  AuthenticatedTournoisRoute: typeof AuthenticatedTournoisRouteWithChildren
   AuthenticatedDuelsIdRoute: typeof AuthenticatedDuelsIdRoute
   AuthenticatedDuelsIndexRoute: typeof AuthenticatedDuelsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
   AuthenticatedClassementRoute: AuthenticatedClassementRoute,
   AuthenticatedDefisRoute: AuthenticatedDefisRoute,
@@ -366,6 +472,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPortefeuilleRoute: AuthenticatedPortefeuilleRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedTableauDeBordRoute: AuthenticatedTableauDeBordRoute,
+  AuthenticatedTournoisRoute: AuthenticatedTournoisRouteWithChildren,
   AuthenticatedDuelsIdRoute: AuthenticatedDuelsIdRoute,
   AuthenticatedDuelsIndexRoute: AuthenticatedDuelsIndexRoute,
 }
